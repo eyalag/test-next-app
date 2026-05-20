@@ -6,6 +6,6 @@ import { trackServerEvent } from "@/lib/analytics-server";
 export async function logOnServer() {
   const tag = getLogTag();
   console.log(`[console][server][${tag}] Server action triggered`);
-  await trackServerEvent("server_log_22", { tag });
+  await trackServerEvent("server_log_222", { tag });
   return tag;
 }
