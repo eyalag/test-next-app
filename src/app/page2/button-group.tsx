@@ -37,7 +37,7 @@ export function ButtonGroup() {
           onClick={async () => {
             const tag = getLogTag();
             console.log(`[console][client][${tag}] Client-side log (before server action)`);
-            trackEvent("client_log", { tag });
+            trackEvent("client_log_2", { tag });
             setLastTag(tag);
             const serverTag = await logOnServer();
             setLastTag(serverTag);
