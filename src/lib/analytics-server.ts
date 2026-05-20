@@ -1,5 +1,5 @@
 const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID ?? "G-ZPSVR0RFS6";
-const GA_API_SECRET = process.env.GA_API_SECRET ?? "G-ZPSVR0RFS6";
+const GA_API_SECRET = process.env.GA_API_SECRET ?? "";
 
 export async function trackServerEvent(
   eventName: string,
@@ -10,14 +10,22 @@ export async function trackServerEvent(
     return;
   }
 
-  await fetch(
-    `https://www.google-analytics.com/mp/collect?measurement_id=${GA_MEASUREMENT_ID}&api_secret=${GA_API_SECRET}`,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        client_id: "server",
-        events: [{ name: eventName, params }],
-      }),
-    },
-  );
+  try {
+    const res = await fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${GA_MEASUREMENT_ID}&api_secret=${GA_API_SECRET}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: "server",
+          events: [{ name: eventName, params }],
+        }),
+      },
+    );
+    if (!res.ok) {
+      console.error(`[analytics] GA server event failed: ${res.status} ${res.statusText}`);
+    }
+  } catch (err) {
+    console.error("[analytics] GA server event error:", err);
+  }
 }
