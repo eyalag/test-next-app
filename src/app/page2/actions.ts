@@ -1,6 +1,9 @@
 "use server";
 
+import { getLogTag } from "@/lib/log-tag";
+
 export async function logOnServer() {
-  const rand = Math.floor(Math.random() * 900 + 100);
-  console.log(`[console][server][${rand}] Server action triggered`);
+  const tag = getLogTag();
+  console.log(`[console][server][${tag}] Server action triggered`);
+  return tag;
 }
