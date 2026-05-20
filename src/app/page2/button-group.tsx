@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getLogTag } from "@/lib/log-tag";
+import { trackEvent } from "@/lib/analytics";
 import { logOnServer } from "./actions";
 
 export function ButtonGroup() {
@@ -16,6 +17,7 @@ export function ButtonGroup() {
           onClick={() => {
             const tag = getLogTag();
             console.log(`[console][client][${tag}] Client-side log only`);
+            trackEvent("client_log", { tag });
             setLastTag(tag);
           }}
         >
@@ -35,6 +37,7 @@ export function ButtonGroup() {
           onClick={async () => {
             const tag = getLogTag();
             console.log(`[console][client][${tag}] Client-side log (before server action)`);
+            trackEvent("client_log", { tag });
             setLastTag(tag);
             const serverTag = await logOnServer();
             setLastTag(serverTag);
