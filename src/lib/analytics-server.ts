@@ -1,7 +1,18 @@
+import { getPostHogServer } from "./posthog-server";
+
 const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID ?? "G-ZPSVR0RFS6";
 const GA_API_SECRET = process.env.GA_API_SECRET ?? "";
 
 export async function trackServerEvent(
+  eventName: string,
+  params?: Record<string, string | number | boolean>,
+) {
+  const gaPromise = trackGA(eventName, params);
+  const phPromise = trackPostHog(eventName, params);
+  await Promise.all([gaPromise, phPromise]);
+}
+
+async function trackGA(
   eventName: string,
   params?: Record<string, string | number | boolean>,
 ) {
@@ -27,5 +38,18 @@ export async function trackServerEvent(
     }
   } catch (err) {
     console.error("[analytics] GA server event error:", err);
+  }
+}
+
+async function trackPostHog(
+  eventName: string,
+  params?: Record<string, string | number | boolean>,
+) {
+  try {
+    const posthog = getPostHogServer();
+    posthog.capture({ distinctId: "server", event: eventName, properties: params });
+    await posthog.shutdown();
+  } catch (err) {
+    console.error("[analytics] PostHog server event error:", err);
   }
 }
